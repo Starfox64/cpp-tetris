@@ -12,9 +12,9 @@
 #include <string>
 #include <iostream>
 
-#include "Utilities.h"
 #include "Cell.h"
 #include "Game.h"
+#include "Utilities.h"
 
 
 

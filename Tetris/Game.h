@@ -2,11 +2,12 @@
 
 class Game
 {
-private:
+public:
 	//	STATIC ATTRIBUTES
 	static const int HEIGHT = 22;
 	static const int WIDTH = 10;
 
+private:
 	//	ATTRIBUTES
 	Cell* board[HEIGHT][WIDTH];
 

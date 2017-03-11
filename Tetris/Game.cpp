@@ -6,8 +6,7 @@
 #define FOREGROUND_CYAN 0x0003
 #define FOREGROUND_WHITE 0x0007
 #else
-#define ANSI_CLS		   "\033[2J"
-
+//move to [L][C]: \033[<L>;<C>H
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
 #define ANSI_COLOR_CYAN    "\x1b[36m"
@@ -20,7 +19,6 @@ Game::Game()
 {
 	this->resetBoard();
 }
-
 
 Game::~Game()
 {
@@ -48,5 +46,12 @@ void Game::start()
 //	OPERATOR OVERLOADS
 std::ostream& operator<<(std::ostream& stream, const Game* game)
 {
-	
+#ifdef _WIN32
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 0, 0 });
+#else	//UNIX
+	stream << "\033[0;0H";
+#endif
+	utils::printGameBoard(stream, game->board);
+
+	return stream;
 }
