@@ -1,27 +1,41 @@
 #include "stdafx.h"
 #include "Utilities.h"
+#include <stdio.h>
+#include <ctime>
+
+#ifdef _WIN32
+#include <windows.h>
+#else //unix
+#include <unistd.h>
+#endif
+
 
 namespace utils
 {
-
-	std::ostream& printGameBoard(std::ostream& stream, Cell* const board[Game::HEIGHT][Game::WIDTH])
+	void moveCursor(short int line, short int col)
 	{
-		stream << " ";
-		for (int i = 0; i < Game::WIDTH+1; i++) stream << "_-";
-		stream << std::endl;
-		for (int i = 0; i < Game::HEIGHT; i++)
-		{
-			stream << "||";
-			for (int j = 0; j < Game::WIDTH; j++)
-			{
-				stream << board[i][j];
-			}
-			stream << "||" << std::endl;
-		}
-		stream << " ";
-		for (int i = 0; i < Game::WIDTH+1; i++) stream << "_-";
-
-		return stream;
+		#ifdef _WIN32
+		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { line, col });
+		#else
+		std::cout << "\033[" << line << ";" << col << "H";
+		#endif
 	}
+
+	void wait(int ms)
+	{
+#ifdef _WIN32
+		Sleep(ms);
+#else
+		if (ms < 1000)
+			usleep(ms * 1000);
+		else
+		{
+			for (int i = 0; i < ms / 500 i++)
+				usleep(500);
+			usleep(ms % 500);
+		}
+#endif	
+	}
+
 };
 

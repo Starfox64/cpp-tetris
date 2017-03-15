@@ -7,12 +7,14 @@
 
 #include "targetver.h"
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <tchar.h>
 #include <string>
 #include <iostream>
 
 #include "Cell.h"
+#include "Tetriminos.h"
 #include "Game.h"
 #include "Utilities.h"
 
