@@ -1,17 +1,7 @@
 #include "stdafx.h"
 #include "Game.h"
 
-#ifdef _WIN32
-#include <windows.h>
-#define FOREGROUND_CYAN 0x0003
-#define FOREGROUND_WHITE 0x0007
-#else
-//move to [L][C]: \033[<L>;<C>H
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_CYAN    "\x1b[36m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
-#endif
+#include <chrono>
 
 
 //	CONSTRUCTORS
@@ -116,9 +106,11 @@ void Game::moveTet(const char direction)
 	}
 	for (int i = 0; i < Tetriminos::NB_CELLS; i++)
 	{
-		board[(*currentTet)[i]->getY() + y][(*currentTet)[i]->getX() + x] = (*currentTet)[i];
 		board[(*currentTet)[i]->getY()][(*currentTet)[i]->getX()] = NULL;
 	}
+	(*currentTet) -= x;
+	(*currentTet) += y;
+	addTetToBoard();
 }
 
 //	PUBLIC METHODS
@@ -128,25 +120,51 @@ void Game::start()
 	this->addTetToBoard();
 	this->nextTet = new Tetriminos();
 
+	bool redraw = false;
+	long start = utils::timeStamp();
+	long delta = 500;
 	int i = 0;
 	std::cout << this << i;
-	utils::wait(1000);
 	i++;
 	while (true)
 	{
-		if (isBottomFree())
+		if (utils::isInput())
 		{
-			moveTet('D');
-			(*currentTet) += 1;
+			char input = utils::getInput();
+			utils::moveCursor(25, 0);
+			std::cout << input << std::endl;
+			if (input == 'L' && isSideFree('L'))
+			{
+				moveTet('L');
+			}
+			else if (input == 'R' && isSideFree('R'))
+			{
+				moveTet('R');
+			}
+			redraw = true;
 		}
-		else
+
+
+		if (utils::timeStamp() - start >= delta)
 		{
-			spawnTet();
+			start = utils::timeStamp();
+			if (isBottomFree())
+			{
+				moveTet('D');
+			}
+			else
+			{
+				spawnTet();
+			}
+			redraw = true;
+			i++;
 		}
-			
-		std::cout << this << i;
-		i++;
-		utils::wait(500);
+
+		if (redraw)
+		{
+			std::cout << this << i;
+			redraw = false;
+		}
 	}
 }
 
