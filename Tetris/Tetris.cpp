@@ -7,6 +7,8 @@
 
 int main()
 {
+	utils::ShowConsoleCursor(false);
+
 	Game* g = new Game();
 	g->start();
 

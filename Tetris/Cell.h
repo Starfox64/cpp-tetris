@@ -6,24 +6,36 @@ private:
 	//	ATTRIBUTES
 	int x;
 	int y;
-	bool falling;
+
+	int innerX;
+	int innerY;
+
+	int color;
 
 public:
 	//	CONSTRUCTORS
 	Cell();
 	Cell(int y, int x);
-	Cell(int y, int x, bool falling);
+	Cell(int y, int innerY, int x, int innerX, int color);
 	~Cell();
 
 	//	GETTERS
 	int getX();
 	int getY();
-	bool isFalling();
+
+	int getInnerX();
+	int getInnerY();
+
+	int getColor();
 
 	//	SETTERS
 	void setX(int x);
 	void setY(int y);
-	void setFalling(bool falling);
+
+	void setInnerX(int x);
+	void setInnerY(int y);
+
+	void setColor(int color);
 
 	//	OPERATOR OVERLOADS
 	friend std::ostream& operator<<(std::ostream& stream, const Cell* c);

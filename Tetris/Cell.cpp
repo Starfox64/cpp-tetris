@@ -7,21 +7,24 @@ Cell::Cell()
 {
 	this->y = 0;
 	this->x = 0;
-	this->falling = true;
+	this->color = 15;
 }
 
 Cell::Cell(int y, int x)
 {
 	this->y = y;
 	this->x = x;
-	this->falling = true;
+	this->color = 15;
 }
 
-Cell::Cell(int y, int x, bool falling)
+Cell::Cell(int y, int innerY, int x, int innerX, int color)
 {
 	this->y = y;
+	this->innerY = innerY;
 	this->x = x;
-	this->falling = falling;
+	this->innerX = innerX;
+
+	this->color = color;
 }
 
 Cell::~Cell()
@@ -40,9 +43,19 @@ int Cell::getY()
 	return this->y;
 }
 
-bool Cell::isFalling()
+int Cell::getInnerX()
 {
-	return this->falling;
+	return this->innerX;
+}
+
+int Cell::getInnerY()
+{
+	return this->innerY;
+}
+
+int Cell::getColor()
+{
+	return this->color;
 }
 
 
@@ -57,9 +70,19 @@ void Cell::setY(int y)
 	this->y = y;
 }
 
-void Cell::setFalling(bool falling)
+void Cell::setInnerX(int x)
 {
-	this->falling = falling;
+	this->innerX = x;
+}
+
+void Cell::setInnerY(int y)
+{
+	this->innerY = y;
+}
+
+void Cell::setColor(int color)
+{
+	this->color = color;
 }
 
 
@@ -69,6 +92,10 @@ std::ostream& operator<<(std::ostream& stream, const Cell* c)
 	if (c == NULL)
 		stream << "  ";
 	else
+	{
+		utils::changeColor(c->color);
 		stream << "[]";
+		utils::changeColor(15);
+	}
 	return stream;
 }

@@ -14,16 +14,29 @@ private:
 	Tetriminos* currentTet;
 	Tetriminos* nextTet;
 
+	bool running;
+	bool helpDrawn;
+	long score;
+	int level;
+
 	//	METHODS
 	void resetBoard();
 	void addTetToBoard();
+	void takeTetOffBoard();
 	void spawnTet();
 	
+	bool isCellFree(int y, int x);
 	bool isBottomFree();
 	bool isSideFree(const char side);
 
+	void deleteLine(int y);
+	void pushBoardDown(int emptyLine);
+	void deleteLines();
 
 	void moveTet(const char direction);
+
+	void drawHelp();
+	void drawNextTet();
 
 public:
 	//	CONSTRUCTORS

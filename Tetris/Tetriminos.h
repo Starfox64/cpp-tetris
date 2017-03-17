@@ -7,10 +7,17 @@ public:
 
 private:
 	Cell* components[NB_CELLS];
+	int maxExtent;
+	int navX;
+	int navY;
+
+	void setNavPoint(int y, int x);
+	void movNavPoint(int y, int x);
 
 public:
 	//	CONSTRUCTORS
 	Tetriminos();
+	Tetriminos(int i);
 	~Tetriminos();
 
 	//METHODS
@@ -20,6 +27,9 @@ public:
 	int right();
 
 	bool contains(Cell* c);
+
+	int ** getRotation();
+	void rotate(int** newPos);
 
 	//	OPERATOR OVERLOADS
 	Cell* operator[](unsigned int index);

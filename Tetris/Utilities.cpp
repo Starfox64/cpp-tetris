@@ -13,6 +13,17 @@
 
 namespace utils
 {
+	void ShowConsoleCursor(bool showFlag)//this is available on stackoverflow
+	{
+		HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+
+		CONSOLE_CURSOR_INFO     cursorInfo;
+
+		GetConsoleCursorInfo(out, &cursorInfo);
+		cursorInfo.bVisible = showFlag; // set the cursor visibility
+		SetConsoleCursorInfo(out, &cursorInfo);
+	}
+
 	void moveCursor(short int line, short int col)
 	{
 		#ifdef _WIN32
@@ -22,20 +33,12 @@ namespace utils
 		#endif
 	}
 
-	void wait(int ms)
+	void changeColor(int color)
 	{
 #ifdef _WIN32
-		Sleep(ms);
-#else
-		if (ms < 1000)
-			usleep(ms * 1000);
-		else
-		{
-			for (int i = 0; i < ms / 500 i++)
-				usleep(500);
-			usleep(ms % 500);
-		}
-#endif	
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+#else//unix
+#endif
 	}
 
 	bool isInput()
@@ -51,6 +54,8 @@ namespace utils
 	{
 #ifdef _WIN32
 		int g = _getch();
+		if (g == 'H' || g == 'h')
+			return 'H';
 		if (g == 0 || g == 224)
 		{
 			int i = _getch();
@@ -77,6 +82,18 @@ namespace utils
 	{
 		using namespace std::chrono;
 		return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+	}
+
+	void initRand()
+	{
+		srand(timeStamp());
+	}
+
+	Tetriminos* newTetriminos()
+	{
+		int i = rand() % 7;
+
+		return new Tetriminos(i);
 	}
 
 };
