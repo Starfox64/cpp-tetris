@@ -3,10 +3,13 @@
 
 #include "stdafx.h"
 
-#include <conio.h>
-
 int main()
 {
+#ifdef _WIN32
+	system("cls");
+#else
+	system("clear");
+#endif
 	utils::ShowConsoleCursor(false);
 	utils::changeColor(15);
 

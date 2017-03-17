@@ -11,6 +11,7 @@
 #include <termios.h>
 #include <sys/select.h>
 #include <stropts.h>
+#include <sys/ioctl.h>
 #endif
 
 
@@ -49,7 +50,7 @@ namespace utils
 #ifdef _WIN32
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 #else//unix
-		char * unixColor;
+		int unixColor;
 		switch (color)
 		{
 		case 8://black
@@ -129,6 +130,7 @@ namespace utils
 				return ' ';
 			}
 		}
+		return ' ';
 #else
 		//this is available on stack overflow
 		char buf = 0;
@@ -148,7 +150,19 @@ namespace utils
 		old.c_lflag |= ECHO;
 		if (tcsetattr(0, TCSADRAIN, &old)<0)
 			perror("tcsetattr ~ICANON");
-		return buf;
+		switch (buf)
+		{
+		case 75://left arrow
+			return 'L';
+		case 72://up arrow
+			return 'U';
+		case 77://right arrow
+			return 'R';
+		case 80://down arrow
+			return 'D';
+		default:
+			return ' ';
+		}
 #endif
 	}
 
