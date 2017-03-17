@@ -57,14 +57,6 @@ void Game::spawnTet()
 	addTetToBoard();
 }
 
-void Game::drawNextTet()
-{
-	utils::moveCursor(10, 30);
-	std::cout << "Next piece :";
-
-
-}
-
 bool Game::isCellFree(int y, int x)
 {
 	if (!(0 <= y && y < Game::HEIGHT) || !(0 <= x && x < Game::WIDTH))
@@ -182,40 +174,124 @@ void Game::deleteLines()
 
 void Game::drawHelp()
 {
-	utils::moveCursor(3, 30);
-	if (helpDrawn)
+	utils::moveCursor(5, 31);
+	if (!helpDrawn)
 	{
-		std::cout << "Press 'H' to display help";
-		for (int i = 0; i < 20; i++) std::cout << ' ';
-		for (int i = 4; i < 8; i += 1)
+		std::cout << "Press 'H' to display help    ";
+		for (int i = 6; i < 10; i += 1)
 		{
-			utils::moveCursor(i, 30);
-			for (int j = 0; j < 60; j++) std::cout << ' ';
+			utils::moveCursor(i, 31);
+			for (int j = 0; j < 30; j++) std::cout << ' ';
 		}
-		helpDrawn = false;
+		helpDrawn = true;
 	}
 	else
 	{
-		std::cout << "Use left and right arrow to move the piece,";
-		utils::moveCursor(4, 30);
-		std::cout << "Use up arrow to rotate the piece anti-clockwise,";
-		utils::moveCursor(5, 30);
-		std::cout << "Use down arrow to speed up the fall of the piece";
-		utils::moveCursor(6, 30);
-		std::cout << "Each line gives 10 points. Each 100 points, you level up";
-		utils::moveCursor(7, 30);
-		std::cout << "Speed will lineary increase until you loose ;)";
+		std::cout << "Use < and > to move the piece";
+		utils::moveCursor(6, 31);
+		std::cout << "Use ^ to rotate anti-clockwise";
+		utils::moveCursor(7, 31);
+		std::cout << "Use v to speed up the fall";
+		utils::moveCursor(8, 31);
+		std::cout << "A line : 10p. 100p : level up";
+		utils::moveCursor(9, 31);
+		std::cout << "Speed will lineary increase";
 
-		helpDrawn = true;
+		helpDrawn = false;
 	}
 }
+
+void Game::drawNextTet()
+{
+	utils::moveCursor(12, 31);
+	std::cout << " Next piece :";
+	Cell*** table = this->nextTet->getInnerBoard();
+	for (int i = 0; i < 4; i++)
+	{
+		utils::moveCursor(13 + i, 45);
+		for (int j = 0; j < 4; j++)
+			std::cout << table[i][j];
+	}
+}
+
+void Game::drawBorders()
+{
+	//score and level borders
+	utils::moveCursor(0, 30);
+	std::cout << (char)201;
+	for (int i = 0; i < 30; i++) std::cout << (char)205;
+	std::cout << (char)187;
+	for (int i = 0; i < 2; i++)
+	{
+		utils::moveCursor(1 + i, 30);
+		std::cout << (char)186;
+		utils::moveCursor(1 + i, 61);
+		std::cout << (char)186;
+	}
+	utils::moveCursor(3, 30);
+	std::cout << (char)200;
+	for (int i = 0; i < 30; i++) std::cout << (char)205;
+	std::cout << (char)188;
+
+	//gameBoard borders
+	utils::moveCursor(0, 0);
+	std::cout << (char)201;
+	for (int i = 0; i < Game::WIDTH * 2; i++) std::cout << (char)205;
+	std::cout << (char)187;
+	for (int i = 0; i < Game::HEIGHT; i++)
+	{
+		utils::moveCursor(1 + i, 0);
+		std::cout << (char)186;
+		utils::moveCursor(1 + i, Game::WIDTH * 2 + 1);
+		std::cout << (char)186;
+	}
+	utils::moveCursor(Game::HEIGHT + 1, 0);
+	std::cout << (char)200;
+	for (int i = 0; i < Game::WIDTH * 2; i++) std::cout << (char)205;
+	std::cout << (char)188;
+
+	//next tet borders
+	utils::moveCursor(11, 30);
+	std::cout << (char)201;
+	for (int i = 0; i < 30; i++) std::cout << (char)205;
+	std::cout << (char)187;
+	for (int i = 0; i < 5; i++)
+	{
+		utils::moveCursor(12 + i, 30);
+		std::cout << (char)186;
+		utils::moveCursor(12 + i, 61);
+		std::cout << (char)186;
+	}
+	utils::moveCursor(17, 30);
+	std::cout << (char)200;
+	for (int i = 0; i < 30; i++) std::cout << (char)205;
+	std::cout << (char)188;
+
+	//help borders
+	utils::moveCursor(4, 30);
+	std::cout << (char)201;
+	for (int i = 0; i < 30; i++) std::cout << (char)205;
+	std::cout << (char)187;
+	for (int i = 0; i < 5; i++)
+	{
+		utils::moveCursor(5 + i, 30);
+		std::cout << (char)186;
+		utils::moveCursor(5 + i, 61);
+		std::cout << (char)186;
+	}
+	utils::moveCursor(10, 30);
+	std::cout << (char)200;
+	for (int i = 0; i < 30; i++) std::cout << (char)205;
+	std::cout << (char)188;
+}
+
 
 //	PUBLIC METHODS
 void Game::start()
 {
+	drawBorders();
 	//display help hint
-	utils::moveCursor(3, 30);
-	std::cout << "Press 'H' to display help";
+	drawHelp();
 	//init tetriminos
 	this->nextTet = utils::newTetriminos();
 	spawnTet();
@@ -317,29 +393,19 @@ void Game::start()
 //	OPERATOR OVERLOADS
 std::ostream& operator<<(std::ostream& stream, const Game* game)
 {
-	utils::moveCursor(0, 30);
-	stream << "Level : " << game->level;
-	utils::moveCursor(1, 30);
-	stream << "Score : " << game->score;
+	utils::moveCursor(1, 31);
+	std::cout << " Level : " << game->level;
+	utils::moveCursor(2, 31);
+	std::cout << " Score : " << game->score;
 
-
-	utils::moveCursor(0, 0);
-
-	stream << (char)201;
-	for (int i = 0; i < Game::WIDTH * 2; i++) stream << (char)205;
-	stream << (char)187 << std::endl;
 	for (int i = 0; i < Game::HEIGHT; i++)
 	{
-		stream << (char) 186;
+		utils::moveCursor(1 + i, 1);
 		for (int j = 0; j < Game::WIDTH; j++)
 		{
 			stream << game->board[i][j];
 		}
-		stream <<(char) 186 << std::endl;
 	}
-	stream << (char)200;
-	for (int i = 0; i < Game::WIDTH * 2; i++) stream << (char) 205;
-	stream << (char)188 << std::endl;
-
+	
 	return stream;
 }

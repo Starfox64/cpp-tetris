@@ -20,6 +20,10 @@ public:
 	Tetriminos(int i);
 	~Tetriminos();
 
+	//	GETTERS
+	int getMaxExtent();
+	Cell*** getInnerBoard();
+
 	//METHODS
 	int top();
 	int bottom();
@@ -31,9 +35,11 @@ public:
 	int ** getRotation();
 	void rotate(int** newPos);
 
+
 	//	OPERATOR OVERLOADS
 	Cell* operator[](unsigned int index);
 	Tetriminos* operator+=(int y);
 	Tetriminos* operator-=(int x);
+
 };
 

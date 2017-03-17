@@ -8,13 +8,18 @@
 #include <conio.h>
 #else //unix
 #include <unistd.h>
+#include <termios.h>
+#include <sys/select.h>
+#include <stropts.h>
 #endif
 
 
 namespace utils
 {
-	void ShowConsoleCursor(bool showFlag)//this is available on stackoverflow
+	void ShowConsoleCursor(bool showFlag)
 	{
+#ifdef _WIN32
+		//this is available on stackoverflow
 		HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
 
 		CONSOLE_CURSOR_INFO     cursorInfo;
@@ -22,6 +27,12 @@ namespace utils
 		GetConsoleCursorInfo(out, &cursorInfo);
 		cursorInfo.bVisible = showFlag; // set the cursor visibility
 		SetConsoleCursorInfo(out, &cursorInfo);
+#else//unix
+		if (showFlag)
+			std::cout << "\e[?25l";
+		else
+			std::cout << "\e[?25h";
+#endif
 	}
 
 	void moveCursor(short int line, short int col)
@@ -38,6 +49,35 @@ namespace utils
 #ifdef _WIN32
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 #else//unix
+		char * unixColor;
+		switch (color)
+		{
+		case 8://black
+			unixColor = 0;
+			break;
+		case 12://red
+			unixColor = 1;
+			break;
+		case 10://green
+			unixColor = 2;
+			break;
+		case 14://yellow
+			unixColor = 3;
+			break;
+		case 9://blue
+			unixColor = 4;
+			break;
+		case 13://magenta
+			unixColor = 5;
+			break;
+		case 11://cyan
+			unixColor = 6;
+			break;
+		case 15://white
+			unixColor = 7;
+			break;
+		}
+		std::cout << "\033[" << 30 + unixColor << ";1m";
 #endif
 	}
 
@@ -46,7 +86,23 @@ namespace utils
 #ifdef _WIN32
 		return (_kbhit() != 0);
 #else
-		//unix
+		//M
+		static const int STDIN = 0;
+		static bool initialized = false;
+
+		if (!initialized) {
+			// Use termios to turn off line buffering
+			termios term;
+			tcgetattr(STDIN, &term);
+			term.c_lflag &= ~ICANON;
+			tcsetattr(STDIN, TCSANOW, &term);
+			setbuf(stdin, NULL);
+			initialized = true;
+		}
+
+		int bytesWaiting;
+		ioctl(STDIN, FIONREAD, &bytesWaiting);
+		return bytesWaiting;
 #endif
 	}
 
@@ -74,7 +130,25 @@ namespace utils
 			}
 		}
 #else
-		//unix
+		//this is available on stack overflow
+		char buf = 0;
+		struct termios old = { 0 };
+		fflush(stdout);
+		if (tcgetattr(0, &old)<0)
+			perror("tcsetattr()");
+		old.c_lflag &= ~ICANON;
+		old.c_lflag &= ~ECHO;
+		old.c_cc[VMIN] = 1;
+		old.c_cc[VTIME] = 0;
+		if (tcsetattr(0, TCSANOW, &old)<0)
+			perror("tcsetattr ICANON");
+		if (read(0, &buf, 1)<0)
+			perror("read()");
+		old.c_lflag |= ICANON;
+		old.c_lflag |= ECHO;
+		if (tcsetattr(0, TCSADRAIN, &old)<0)
+			perror("tcsetattr ~ICANON");
+		return buf;
 #endif
 	}
 

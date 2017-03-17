@@ -8,6 +8,7 @@
 int main()
 {
 	utils::ShowConsoleCursor(false);
+	utils::changeColor(15);
 
 	Game* g = new Game();
 	g->start();

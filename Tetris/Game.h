@@ -35,6 +35,7 @@ private:
 
 	void moveTet(const char direction);
 
+	void drawBorders();
 	void drawHelp();
 	void drawNextTet();
 

@@ -77,6 +77,27 @@ Tetriminos::~Tetriminos()
 	}
 }
 
+
+//	GETTERS
+Cell*** Tetriminos::getInnerBoard()
+{
+	Cell*** table = new Cell**[4];
+	for (int i = 0; i < 4; i++)
+	{
+		table[i] = new Cell*[4];
+		for (int j = 0; j < 4; j++)
+			table[i][j] = NULL;
+	}
+
+	for (int i = 0; i < Tetriminos::NB_CELLS; i++)
+	{
+		table[(*this)[i]->getInnerY()][(*this)[i]->getInnerX()] = (*this)[i];
+	}
+
+	return table;
+}
+
+
 //	METHODS
 void Tetriminos::setNavPoint(int y, int x)
 {
@@ -89,7 +110,6 @@ void Tetriminos::movNavPoint(int y, int x)
 	navX += x;
 	navY += y;
 }
-
 
 int Tetriminos::top()
 {
@@ -172,6 +192,7 @@ void Tetriminos::rotate(int** rotation)
 		(*this)[i]->setInnerX(rotation[i][3]);
 	}
 }
+
 
 //	OPERATOR OVERLOADS
 Cell* Tetriminos::operator[](unsigned int index)
